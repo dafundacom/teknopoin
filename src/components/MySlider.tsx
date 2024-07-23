@@ -21,7 +21,7 @@ export default function MySlider<T>({
 	renderItem = () => <div></div>,
 	arrowBtnClass = 'top-1/2 -translate-y-1/2',
 }: MySliderProps<T>) {
-	const data = dataProp.filter(item => item)
+	const data = dataProp.filter((item) => item)
 
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [direction, setDirection] = useState(0)

@@ -1,4 +1,10 @@
-import { Menu, Transition } from '@headlessui/react'
+import {
+	Menu,
+	MenuButton,
+	MenuItems,
+	Transition,
+	MenuItem as MenuItemUI,
+} from '@headlessui/react'
 import { Editor } from '@tiptap/react'
 import { FC, Fragment, useState } from 'react'
 import { TiptapBarItem } from './MenuBar'
@@ -61,14 +67,14 @@ const MenuItemHeading: FC<Props> = ({
 	return (
 		<>
 			<Menu as="div" className="relative inline-block text-left">
-				<Menu.Button as={'div'}>
+				<MenuButton as={'div'}>
 					<MenuItem
 						icon={icon}
 						title={title}
 						isActive={isActive}
 						action={action}
 					/>
-				</Menu.Button>
+				</MenuButton>
 				<Transition
 					as={Fragment}
 					enter="transition ease-out duration-100"
@@ -78,30 +84,34 @@ const MenuItemHeading: FC<Props> = ({
 					leaveFrom="transform opacity-100 scale-100"
 					leaveTo="transform opacity-0 scale-95"
 				>
-					<Menu.Items className="absolute right-0 mt-3 w-52 origin-top-right rounded-2xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800">
+					<MenuItems
+						anchor="top"
+						portal
+						className="absolute right-0 mt-3 w-44 origin-top-right rounded-2xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-52 dark:bg-neutral-800"
+					>
 						<div className="space-y-1 p-3">
-							{headingItem.map(item => (
-								<Menu.Item key={item.title}>
+							{headingItem.map((item) => (
+								<MenuItemUI key={item.title}>
 									{({ active }) => (
 										<button
 											className={`${
 												active || (item.isActive && item.isActive())
 													? 'bg-primary-100 text-primary-900 dark:bg-neutral-700'
 													: ''
-											} flex w-full items-center rounded-lg p-2 text-neutral-900 hover:bg-primary-100 hover:text-primary-900 dark:text-white dark:hover:bg-neutral-700`}
+											} flex w-full items-center rounded-lg p-1.5 text-sm text-neutral-900 hover:bg-primary-100 hover:text-primary-900 sm:p-2 sm:text-base dark:text-white dark:hover:bg-neutral-700`}
 											onClick={item.action}
 										>
 											<div
-												className="menu-item-svg flex h-6 w-6 flex-shrink-0 items-center justify-center"
+												className="menu-item-svg flex h-5 w-5 flex-shrink-0 items-center justify-center sm:h-6 sm:w-6"
 												dangerouslySetInnerHTML={{ __html: item.icon }}
 											></div>
 											<span className="ml-4"> {item.title}</span>
 										</button>
 									)}
-								</Menu.Item>
+								</MenuItemUI>
 							))}
 						</div>
-					</Menu.Items>
+					</MenuItems>
 				</Transition>
 			</Menu>
 		</>

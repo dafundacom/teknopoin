@@ -17,6 +17,7 @@ export interface NcModalProps {
 	modalTitle?: ReactNode
 	isOpenProp?: boolean
 	onCloseModal?: () => void
+	onOpenModal?: () => void
 	leaveAnimationClass?: string
 	initialFocusRef?: React.RefObject<HTMLTextAreaElement | HTMLInputElement>
 }
@@ -33,6 +34,7 @@ const NcModal: FC<NcModalProps> = ({
 	modalTitle = 'Modal title',
 	isOpenProp,
 	onCloseModal,
+	onOpenModal,
 	leaveAnimationClass = 'ease-in duration-100',
 	initialFocusRef,
 }) => {
@@ -48,6 +50,7 @@ const NcModal: FC<NcModalProps> = ({
 	function openModal() {
 		if (typeof isOpenProp !== 'boolean') {
 			setIsOpen(true)
+			onOpenModal && onOpenModal()
 		}
 	}
 
@@ -130,18 +133,6 @@ const NcModal: FC<NcModalProps> = ({
 									<footer className="flex-shrink-0">
 										<div className="border-t border-neutral-100 px-6 py-4 md:py-5 dark:border-neutral-700">
 											{renderFooter(closeModal)}
-
-											{/* -------------  example ----------- */}
-											{/* <div className="flex justify-between">
-                        <Button
-                          sizeClass="py-2.5 px-4 sm:py-3 sm:px-5"
-                          pattern="link"
-                          onClick={closeModal}
-                        >
-                          Close
-                        </Button>
-                        <ButtonPrimary>Show me more</ButtonPrimary>
-                      </div> */}
 										</div>
 									</footer>
 								)}

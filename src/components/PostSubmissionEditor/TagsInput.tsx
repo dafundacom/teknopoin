@@ -88,12 +88,12 @@ const TagsInput: FC<TagsInputProps> = ({ onChange, defaultValue }) => {
 	}
 
 	const checkIncludes = (tag: TagNodeShort) => {
-		return tags.some(item => item.name === tag.name)
+		return tags.some((item) => item.name === tag.name)
 	}
 
 	const setNewTags = (tag: TagNodeShort) => {
 		if (!checkIncludes(tag)) {
-			setTags(prevTags => [...prevTags, tag])
+			setTags((prevTags) => [...prevTags, tag])
 		}
 
 		if (inputRef.current) {
@@ -130,7 +130,7 @@ const TagsInput: FC<TagsInputProps> = ({ onChange, defaultValue }) => {
 	}
 
 	const handleRemoveTag = (tag: TagNodeShort) => {
-		setTags(tags.filter(t => t.name !== tag.name))
+		setTags(tags.filter((t) => t.name !== tag.name))
 		setTimeout(() => {
 			inputRef.current?.focus()
 		}, 100)
@@ -144,7 +144,7 @@ const TagsInput: FC<TagsInputProps> = ({ onChange, defaultValue }) => {
 	return (
 		<div className="relative w-full text-xs sm:text-sm">
 			<ul className="flex flex-wrap gap-1.5">
-				{tags.map(tag => (
+				{tags.map((tag) => (
 					<li
 						className="flex items-center justify-center rounded-lg bg-neutral-100 px-3 py-2 dark:bg-neutral-800"
 						key={tag.databaseId}
@@ -175,8 +175,12 @@ const TagsInput: FC<TagsInputProps> = ({ onChange, defaultValue }) => {
 									: `${T.pageSubmission['Add tag']} (${tags.length}/${MAX_TAGS_LENGTH})`
 							}
 							onFocus={openPopover}
-							onKeyDown={e => {
-								if (e.code !== 'Enter') {
+							onKeyDown={(e) => {
+								if (
+									e.code !== 'Enter' &&
+									e.code !== 'Space' &&
+									e.code !== 'Comma'
+								) {
 									return
 								}
 								setNewTags({
@@ -201,7 +205,7 @@ const TagsInput: FC<TagsInputProps> = ({ onChange, defaultValue }) => {
 					{!!loading && !tagsData.length && <Loading />}
 					{!!tagsData.length ? (
 						<ul className="flex flex-wrap gap-2">
-							{tagsData.map(tag => {
+							{tagsData.map((tag) => {
 								const isSelected = checkIncludes(tag)
 								return (
 									<li key={tag.databaseId}>

@@ -1,5 +1,6 @@
 // import from file json
 import siteSettingsJson from '../../site-settings.json'
+import _ from 'lodash'
 
 type RecursivePartial<T> = {
 	[P in keyof T]?: RecursivePartial<T[P]>

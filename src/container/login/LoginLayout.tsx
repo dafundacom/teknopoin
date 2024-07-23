@@ -55,10 +55,10 @@ const LoginLayout: FC<Props> = ({
 			</Link>
 			<div className="dark relative hidden h-full flex-col overflow-y-auto border-zinc-800 p-10 text-neutral-100 lg:flex dark:border-r">
 				<div className="absolute inset-0 bg-zinc-900" />
-				<div className="relative z-20 flex items-center text-lg font-medium">
+				<div className="dark relative z-20 flex items-center text-lg font-medium">
 					<Logo />
 				</div>
-				<div className="relative z-20 mt-auto">
+				<div className="relative z-20 mt-auto max-w-screen-sm">
 					<blockquote className="space-y-2">
 						<p className="text-lg">“{blockquoteText}”</p>
 						<footer className="text-sm">{blockquoteAuthor}</footer>

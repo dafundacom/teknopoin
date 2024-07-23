@@ -44,7 +44,7 @@ const Button: FC<ButtonProps> = ({
 	switch (pattern) {
 		case 'primary':
 			colors =
-				'bg-primary-700 hover:bg-primary-600 disabled:hover:bg-primary-700 text-primary-50'
+				'bg-primary-700 hover:bg-primary-600 disabled:bg-primary-800 disabled:opacity-50 disabled:hover:bg-primary-700 text-primary-50'
 			break
 		case 'danger':
 			colors =
@@ -60,7 +60,7 @@ const Button: FC<ButtonProps> = ({
 			break
 		case 'third':
 			colors =
-				'bg-white dark:bg-neutral-800 ring-1 ring-neutral-300 hover:ring-neutral-400/80 dark:ring-neutral-600 dark:hover:ring-neutral-500'
+				'bg-white dark:bg-neutral-800 ring-1 ring-neutral-300 hover:ring-neutral-400/80 dark:ring-neutral-600 dark:hover:ring-neutral-500 disabled:hover:ring-neutral-300 dark:disabled:hover:ring-neutral-600 disabled:opacity-60'
 			break
 		case 'link':
 			colors =

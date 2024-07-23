@@ -1,12 +1,17 @@
 import { FC } from 'react'
-import { useEditor, EditorContent, Editor } from '@tiptap/react'
+import {
+	useEditor,
+	EditorContent,
+	Editor,
+	mergeAttributes,
+} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import TextAlign from '@tiptap/extension-text-align'
-import Image from '@tiptap/extension-image'
+import TiptapImage from '@tiptap/extension-image'
 import Table from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
 import TableCell from '@tiptap/extension-table-cell'
@@ -25,6 +30,16 @@ interface Props {
 
 const TiptapEditor: FC<Props> = ({ onUpdate, defaultContent = '' }) => {
 	const T = getTrans()
+
+	const Image = TiptapImage.extend({
+		renderHTML({ node, HTMLAttributes }) {
+			return [
+				'figure',
+				{ class: 'proseMirror__image-wrapper wp-block-image' },
+				['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)],
+			]
+		},
+	})
 
 	const editor = useEditor({
 		extensions: [
@@ -48,7 +63,6 @@ const TiptapEditor: FC<Props> = ({ onUpdate, defaultContent = '' }) => {
 			}),
 			Image.configure({
 				allowBase64: true,
-				inline: false,
 				HTMLAttributes: {
 					class: 'ncmaz-custom-img-editor rounded',
 				},

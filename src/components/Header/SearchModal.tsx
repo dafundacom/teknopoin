@@ -13,6 +13,7 @@ import { ArrowUpRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import {
 	CategoriesIcon,
+	FilterVerticalIcon,
 	PostSearchIcon,
 	SearchIcon,
 	UserSearchIcon,
@@ -47,6 +48,12 @@ const quickActions: PersonType[] = [
 		name: T['Search posts'],
 		icon: PostSearchIcon,
 		uri: '/search/posts/',
+	},
+	{
+		type: 'quick-action',
+		name: T['Filter posts by'],
+		icon: FilterVerticalIcon,
+		uri: '/posts/',
 	},
 	{
 		type: 'quick-action',
@@ -114,10 +121,10 @@ const SearchModal: FC<Props> = ({ renderTrigger, triggerClassName = '' }) => {
 					first: 8,
 				},
 			})
-			.then(res => {
+			.then((res) => {
 				setPosts((res?.data?.posts?.nodes as TPostCard[]) || [])
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.log(err)
 			})
 			.finally(() => {
@@ -227,7 +234,7 @@ const SearchModal: FC<Props> = ({ renderTrigger, triggerClassName = '' }) => {
 											<li className="p-2">
 												<ul className="divide-y divide-gray-100 text-sm text-gray-700 dark:divide-gray-700 dark:text-gray-300">
 													{posts.length ? (
-														posts.map(post => (
+														posts.map((post) => (
 															<ComboboxOption
 																as={'li'}
 																key={post.databaseId}
@@ -261,7 +268,7 @@ const SearchModal: FC<Props> = ({ renderTrigger, triggerClassName = '' }) => {
 												</h2>
 
 												<ul className="text-sm text-gray-700 dark:text-gray-300">
-													{explores.map(explore => (
+													{explores.map((explore) => (
 														<ComboboxOption
 															as={'li'}
 															key={explore.name}
@@ -300,7 +307,7 @@ const SearchModal: FC<Props> = ({ renderTrigger, triggerClassName = '' }) => {
 										<li className="p-2">
 											<h2 className="sr-only">Quick actions</h2>
 											<ul className="text-sm text-gray-700 dark:text-gray-300">
-												{quickActions.map(action => (
+												{quickActions.map((action) => (
 													<ComboboxOption
 														as={'li'}
 														key={action.name}

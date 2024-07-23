@@ -35,11 +35,11 @@ const NavigationItem: FC<NavigationItemProps> = ({
 	const [menuCurrentHovers, setMenuCurrentHovers] = useState<string[]>([])
 
 	const onMouseEnterMenu = (id: string) => {
-		setMenuCurrentHovers(state => [...state, id])
+		setMenuCurrentHovers((state) => [...state, id])
 	}
 
 	const onMouseLeaveMenu = (id: string) => {
-		setMenuCurrentHovers(state => {
+		setMenuCurrentHovers((state) => {
 			return state.filter((item, index) => {
 				return item !== id && index < state.indexOf(id)
 			})
@@ -112,7 +112,7 @@ const NavigationItem: FC<NavigationItemProps> = ({
 										className={`grid grid-cols-1 gap-10 sm:gap-8 lg:grid-cols-${postsColumns}`}
 									>
 										<h3 className="sr-only">Recent posts</h3>
-										{menu.ncmazfaustMenu?.posts?.nodes.map(p => {
+										{menu.ncmazfaustMenu?.posts?.nodes.map((p) => {
 											if (p.__typename !== 'Post') return null
 											const post = getPostDataFromPostFragment(
 												p as NcmazFcPostCardFieldsFragment,
@@ -155,10 +155,14 @@ const NavigationItem: FC<NavigationItemProps> = ({
 																{post.title}
 															</Link>
 														</h4>
-														<div
-															dangerouslySetInnerHTML={{ __html: post.excerpt }}
-															className="mt-2 text-sm leading-6 text-neutral-600"
-														></div>
+														<div className="mt-2 break-words text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+															<span
+																className="line-clamp-3"
+																dangerouslySetInnerHTML={{
+																	__html: post.excerpt,
+																}}
+															></span>
+														</div>
 													</div>
 												</article>
 											)
@@ -220,7 +224,7 @@ const NavigationItem: FC<NavigationItemProps> = ({
 								className="sub-menu absolute left-0 top-full z-10 w-56 transform"
 							>
 								<ul className="relative grid space-y-1 rounded-2xl bg-white py-3 text-sm shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-900 dark:ring-white dark:ring-opacity-10">
-									{menuDropdown.children?.map(i => {
+									{menuDropdown.children?.map((i) => {
 										if (i.children?.length) {
 											return renderDropdownMenuNavlinkHasChild(i)
 										} else {
@@ -275,7 +279,7 @@ const NavigationItem: FC<NavigationItemProps> = ({
 								className="sub-menu absolute left-full top-0 z-10 w-56 pl-2"
 							>
 								<ul className="relative grid space-y-1 rounded-xl bg-white py-3 text-sm shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-neutral-900 dark:ring-white dark:ring-opacity-10">
-									{item.children?.map(i => {
+									{item.children?.map((i) => {
 										if (i.children?.length) {
 											return renderDropdownMenuNavlinkHasChild(i)
 										} else {

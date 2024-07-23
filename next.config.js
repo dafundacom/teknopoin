@@ -19,6 +19,12 @@ module.exports = withFaust({
 				pathname: '/**',
 			},
 			{
+				protocol: 'http',
+				hostname: getWpHostname(),
+				port: '',
+				pathname: '/**',
+			},
+			{
 				protocol: 'https',
 				hostname: getWpHostname(),
 				port: '',

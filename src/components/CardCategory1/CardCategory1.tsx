@@ -3,6 +3,7 @@ import NcImage from '@/components/NcImage/NcImage'
 import Link from 'next/link'
 import { getCatgoryDataFromCategoryFragment } from '@/utils/getCatgoryDataFromCategoryFragment'
 import { NcmazFcCategoryFullFieldsFragmentFragment } from '@/__generated__/graphql'
+import getTrans from '@/utils/getTrans'
 
 export interface TCategoryCardFull
 	extends NcmazFcCategoryFullFieldsFragmentFragment {}
@@ -14,6 +15,8 @@ export interface CommonTermCardProps {
 export interface CardCategory1Props extends CommonTermCardProps {
 	size?: 'large' | 'normal'
 }
+
+const T = getTrans()
 
 const CardCategory1: FC<CardCategory1Props> = ({
 	className = '',
@@ -51,7 +54,7 @@ const CardCategory1: FC<CardCategory1Props> = ({
 						size === 'large' ? 'text-sm' : 'text-xs'
 					} mt-[2px] block text-neutral-500 dark:text-neutral-400`}
 				>
-					{count} Articles
+					{count} {T['Articles']}
 				</span>
 			</div>
 		</Link>

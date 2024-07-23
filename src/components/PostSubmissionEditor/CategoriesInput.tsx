@@ -78,7 +78,7 @@ const CategoriesInput: FC<Props> = ({ onChange, defaultValue }) => {
 	const checkIncludes = (
 		category: NcmazFcCategoryFullFieldsFragmentFragment,
 	) => {
-		return categories.some(item => item.databaseId === category.databaseId)
+		return categories.some((item) => item.databaseId === category.databaseId)
 	}
 
 	function closePopover() {
@@ -91,7 +91,7 @@ const CategoriesInput: FC<Props> = ({ onChange, defaultValue }) => {
 
 	const setNewTags = (category: NcmazFcCategoryFullFieldsFragmentFragment) => {
 		if (!checkIncludes(category)) {
-			setCategories(prevCategories => [...prevCategories, category])
+			setCategories((prevCategories) => [...prevCategories, category])
 		}
 
 		if (inputRef.current) {
@@ -103,7 +103,9 @@ const CategoriesInput: FC<Props> = ({ onChange, defaultValue }) => {
 	const handleRemoveTag = (
 		category: NcmazFcCategoryFullFieldsFragmentFragment,
 	) => {
-		setCategories(categories.filter(t => t.databaseId !== category.databaseId))
+		setCategories(
+			categories.filter((t) => t.databaseId !== category.databaseId),
+		)
 		setTimeout(() => {
 			inputRef.current?.focus()
 		}, 100)
@@ -144,7 +146,7 @@ const CategoriesInput: FC<Props> = ({ onChange, defaultValue }) => {
 		<div className="relative w-full text-xs sm:text-sm">
 			<>
 				<ul className="flex flex-wrap gap-1.5">
-					{categories.map(cat => (
+					{categories.map((cat) => (
 						<li
 							className="flex items-center justify-center rounded-lg bg-neutral-100 px-3 py-2 dark:bg-neutral-800"
 							key={cat.databaseId}
@@ -187,7 +189,7 @@ const CategoriesInput: FC<Props> = ({ onChange, defaultValue }) => {
 						{!!loading && !categoriesData.length && <Loading />}
 						{!!categoriesData.length ? (
 							<ul className="flex flex-wrap gap-2">
-								{categoriesData.map(cat => {
+								{categoriesData.map((cat) => {
 									const isSelected = checkIncludes(cat)
 									return (
 										<li key={cat.databaseId}>

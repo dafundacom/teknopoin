@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import ButtonPrimary from '@/components/Button/ButtonPrimary'
 import TitleEditor from './TitleEditor'
 import { debounce } from 'lodash'
@@ -47,24 +47,19 @@ interface Props {
 	//
 }
 
-export function handleBeforeunload(event: BeforeUnloadEvent) {
-	event.preventDefault()
-	event.returnValue = ''
-}
-
 const CreateNewPostEditor: FC<Props> = ({
 	isEditingPostId,
 	isEditingPage,
 	isSubmittingPage,
-	defaultTitle = '',
-	defaultContent = '',
-	defaultFeaturedImage = {
+	defaultTitle: defaultTitleProp = '',
+	defaultContent: defaultContentProp = '',
+	defaultFeaturedImage: defaultFeaturedImageProp = {
 		sourceUrl: '',
 		altText: '',
 	},
-	defaultTags = [],
-	defaultCategories = [],
-	defaultPostOptionsData = {
+	defaultTags: defaultTagsProp = [],
+	defaultCategories: defaultCategoriesProp = [],
+	defaultPostOptionsData: defaultPostOptionsDataProp = {
 		audioUrl: '',
 		videoUrl: '',
 		excerptText: '',
@@ -82,16 +77,97 @@ const CreateNewPostEditor: FC<Props> = ({
 	//
 	const router = useRouter()
 	const T = getTrans()
-	//
-	const [titleContent, setTitleContent] = useState(defaultTitle)
-	const [contentHTML, setContentHTML] = useState(defaultContent)
-	const [featuredImage, setFeaturedImage] = useState(defaultFeaturedImage)
-	const [tags, setTags] = useState(defaultTags)
-	const [categories, setCategories] = useState(defaultCategories)
-	const [postOptionsData, setPostOptionsData] = useState(defaultPostOptionsData)
+	const localStoragePath = isSubmittingPage
+		? 'submission_page__new'
+		: 'submission_page__edit__' + (isEditingPostId || 'none')
 
 	//
+	const [titleContent, setTitleContent] = useState<string>(
+		() =>
+			JSON.parse(localStorage.getItem(localStoragePath) || '{}').titleContent ||
+			defaultTitleProp,
+	)
+	const [contentHTML, setContentHTML] = useState<string>(
+		() =>
+			JSON.parse(localStorage.getItem(localStoragePath) || '{}').contentHTML ||
+			defaultContentProp,
+	)
+	const [featuredImage, setFeaturedImage] = useState<ImageState>(
+		() =>
+			JSON.parse(localStorage.getItem(localStoragePath) || '{}')
+				.featuredImage || defaultFeaturedImageProp,
+	)
+	const [tags, setTags] = useState<TagNodeShort[]>(
+		() =>
+			JSON.parse(localStorage.getItem(localStoragePath) || '{}').tags ||
+			defaultTagsProp,
+	)
+	const [categories, setCategories] = useState<
+		NcmazFcCategoryFullFieldsFragmentFragment[]
+	>(
+		() =>
+			JSON.parse(localStorage.getItem(localStoragePath) || '{}').categories ||
+			defaultCategoriesProp,
+	)
+	const [postOptionsData, setPostOptionsData] = useState<PostOptionsData>(
+		() =>
+			JSON.parse(localStorage.getItem(localStoragePath) || '{}')
+				.postOptionsData || defaultPostOptionsDataProp,
+	)
+	//
 	const [newUpdatedUri, setNewUpdatedUri] = useState('')
+	const [isSubmitSuccess, setIsSubmitSuccess] = useState(false)
+
+	//
+
+	// all keys of states
+	const stateKeys = [
+		'titleContent',
+		'contentHTML',
+		'featuredImage',
+		'tags',
+		'categories',
+		'postOptionsData',
+	] as const
+
+	const updateToLocalStorage = (
+		name: (typeof stateKeys)[number],
+		value: unknown,
+	) => {
+		localStorage.setItem(
+			localStoragePath,
+			JSON.stringify({
+				titleContent,
+				contentHTML,
+				featuredImage,
+				tags,
+				categories,
+				postOptionsData,
+				...{ [name]: value },
+			}),
+		)
+	}
+	//
+
+	const handleRevertToDefault = () => {
+		localStorage.removeItem(localStoragePath)
+		router.reload()
+	}
+
+	useEffect(() => {
+		if (localStorage.getItem(localStoragePath)) {
+			const data = JSON.parse(localStorage?.getItem?.(localStoragePath) || '')
+			if (!data) {
+				return
+			}
+			setTitleContent(data.titleContent || defaultTitleProp)
+			setContentHTML(data.contentHTML || defaultContentProp)
+			setFeaturedImage(data.featuredImage || defaultFeaturedImageProp)
+			setTags(data.tags || defaultTagsProp)
+			setCategories(data.categories || defaultCategoriesProp)
+			setPostOptionsData(data.postOptionsData || defaultPostOptionsDataProp)
+		}
+	}, [])
 	//
 
 	// MUTATION_CREATE_POST GQL
@@ -101,9 +177,10 @@ const CreateNewPostEditor: FC<Props> = ({
 		NC_MUTATION_CREATE_POST,
 		{
 			client,
-			onCompleted: data => {
+			onCompleted: (data) => {
+				setIsSubmitSuccess(true)
 				toast.success(T.pageSubmission['Created new post successfully'])
-				window.removeEventListener('beforeunload', handleBeforeunload)
+
 				if (data.createPost?.post?.status !== 'publish') {
 					router.push(
 						`/preview${data?.createPost?.post?.uri}&preview=true&previewPathname=post`,
@@ -112,7 +189,7 @@ const CreateNewPostEditor: FC<Props> = ({
 				}
 				router.replace(data?.createPost?.post?.uri || '')
 			},
-			onError: error => {
+			onError: (error) => {
 				errorHandling(error)
 			},
 		},
@@ -126,12 +203,12 @@ const CreateNewPostEditor: FC<Props> = ({
 		},
 	] = useMutation(NC_MUTATION_UPDATE_POST, {
 		client,
-		onCompleted: data => {
+		onCompleted: (data) => {
+			setIsSubmitSuccess(true)
 			toast.success(T.pageSubmission['Update post successfully'])
-			window.removeEventListener('beforeunload', handleBeforeunload)
 			setNewUpdatedUri(`/?p=${data?.updatePost?.post?.databaseId}`)
 		},
-		onError: error => {
+		onError: (error) => {
 			errorHandling(error)
 		},
 	})
@@ -139,29 +216,70 @@ const CreateNewPostEditor: FC<Props> = ({
 	//
 	const debounceGetTitle = debounce(function (e: Editor) {
 		setTitleContent(e.getText())
+		//
+		updateToLocalStorage('titleContent', e.getText())
 	}, 300)
 
 	const debounceGetContentHtml = debounce(function (e: Editor) {
 		setContentHTML(e.getHTML())
+		//
+		updateToLocalStorage('contentHTML', e.getHTML())
 	}, 400)
+	//
+
+	useEffect(() => {
+		if (isSubmitSuccess) {
+			// remove localstorage
+			localStorage.removeItem(localStoragePath)
+		}
+	}, [isSubmitSuccess])
+
+	useEffect(() => {
+		//   Kiểm tra xem có bao nhiêu key trong localStorage có chứa submission_page__edit__
+		//  Nếu có nhiều hơn 1 key thì xóa hết các key đó đi và chỉ giữ lại key hiện tại là localStoragePath
+
+		const keys = Object.keys(localStorage)
+		const keysWithEdit = keys.filter((key) =>
+			key.startsWith('submission_page__edit__'),
+		)
+		if (keysWithEdit.length > 2) {
+			keysWithEdit.forEach((key) => {
+				if (key !== localStoragePath) {
+					localStorage.removeItem(key)
+				}
+			})
+		}
+	}, [])
+
 	//
 	const handleChangeFeaturedImage = (image: ImageState) => {
 		setFeaturedImage(image)
+		updateToLocalStorage('featuredImage', image)
 		return
 	}
 
 	const handleChangeCategories = (
 		data: NcmazFcCategoryFullFieldsFragmentFragment[],
 	) => {
+		// Thực hiện điều này để tránh việc gọi updateToLocalStorage ngay lần mount đầu tiên.
+		if (data.length === categories.length) {
+			return
+		}
 		setCategories(data)
+		updateToLocalStorage('categories', data)
 	}
 
-	const handleChangeTags = (tags: TagNodeShort[]) => {
-		setTags(tags)
+	const handleChangeTags = (data: TagNodeShort[]) => {
+		if (data.length === tags.length) {
+			return
+		}
+		setTags(data)
+		updateToLocalStorage('tags', data)
 	}
 
 	const handleApplyPostOptions = (data: PostOptionsData) => {
 		setPostOptionsData(data)
+		updateToLocalStorage('postOptionsData', data)
 	}
 
 	const onSubmmitMutation = (status: PostStatusEnum) => {
@@ -177,10 +295,10 @@ const CreateNewPostEditor: FC<Props> = ({
 					status,
 					title: titleContent,
 					content: contentHTML,
-					categoryNodes: categories.map(item => ({
+					categoryNodes: categories.map((item) => ({
 						id: item.databaseId.toString(),
 					})),
-					ncTags: tags.map(item => item.name).join(','),
+					ncTags: tags.map((item) => item.name).join(','),
 					featuredImg_alt: featuredImage?.altText ?? null,
 					featuredImg_url: featuredImage?.sourceUrl ?? null,
 					date: postOptionsData.timeSchedulePublication || null,
@@ -240,10 +358,10 @@ const CreateNewPostEditor: FC<Props> = ({
 					status,
 					title: titleContent,
 					content: contentHTML,
-					categoryNodes: categories.map(item => ({
+					categoryNodes: categories.map((item) => ({
 						id: item.databaseId.toString(),
 					})),
-					ncTags: tags.map(item => item.name).join(','),
+					ncTags: tags.map((item) => item.name).join(','),
 					featuredImg_alt: featuredImage?.altText ?? null,
 					featuredImg_url: featuredImage?.sourceUrl ?? null,
 					date: postOptionsData.timeSchedulePublication || null,
@@ -351,6 +469,10 @@ const CreateNewPostEditor: FC<Props> = ({
 		)
 	}
 
+	const enableRevertBtn =
+		localStoragePath.startsWith('submission_page__edit__') &&
+		!!localStorage.getItem(localStoragePath)?.length
+
 	return (
 		<>
 			<div className="nc-CreateNewPostEditor relative flex-1">
@@ -365,7 +487,7 @@ const CreateNewPostEditor: FC<Props> = ({
 					</div>
 
 					<div className="w-full flex-shrink-0 border-t border-neutral-200 px-2.5 dark:border-neutral-600">
-						<div className="mx-auto flex w-full max-w-screen-md gap-3 py-4 pt-[18px]">
+						<div className="mx-auto flex w-full max-w-screen-md flex-wrap gap-2 py-4 pt-[18px] sm:gap-3">
 							<ButtonPrimary
 								fontSize="text-base font-medium"
 								onClick={handleClickPublish}
@@ -391,6 +513,18 @@ const CreateNewPostEditor: FC<Props> = ({
 								defaultData={postOptionsData}
 								onSubmit={handleApplyPostOptions}
 							/>
+							{enableRevertBtn ? (
+								<Button
+									fontSize="text-sm font-medium"
+									onClick={handleRevertToDefault}
+									loading={LOADING}
+									disabled={LOADING}
+									pattern="link"
+									sizeClass="py-3 px-4"
+								>
+									{T.pageSubmission['Revert new changes']}
+								</Button>
+							) : null}
 						</div>
 					</div>
 				</div>

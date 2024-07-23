@@ -1,4 +1,16 @@
 export default {
+	'Revert new changes': 'Revert new changes',
+	'Filter posts by': 'Filter posts by',
+	'Comments/asc': 'Comments/asc',
+	'Member since': 'Member since',
+	Next: 'Next',
+	Previous: 'Previous',
+	Prev: 'Prev',
+	Clear: 'Clear',
+	'View all': 'View all',
+	'Password reset link sent': 'Password reset link sent',
+	'A password reset link has been sent to your email!':
+		'A password reset link has been sent to your email!',
 	'Add elsewhere links to your profile.':
 		'Add elsewhere links to your profile.',
 	'Social settings': 'Social settings',
@@ -168,6 +180,7 @@ export default {
 		'Add to discussion': 'Add to discussion',
 	},
 	pageSubmission: {
+		'Revert new changes': 'Revert new changes',
 		'Choose the post style. Only applies to Standard format!':
 			'Choose the post style. Only applies to Standard format!',
 		'Post style': 'Post style',

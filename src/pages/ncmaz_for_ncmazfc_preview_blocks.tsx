@@ -83,12 +83,6 @@ const Page = () => {
 					setTimeout(() => {
 						const h = targetNode?.getBoundingClientRect().height
 						setHeight(h)
-
-						// remove all href on a tag
-						const aTags = document.querySelectorAll('a')
-						aTags.forEach(aTag => {
-							aTag.removeAttribute('href')
-						})
 					}, 100)
 				}
 			}
@@ -102,25 +96,31 @@ const Page = () => {
 		}
 	}, [ref])
 
-	return (
-		<div ref={ref} className="no-prose">
-			{!!data?.data?.length &&
-				messageType === 'ncmazfc-preview-posts-block' && (
-					<MagazineLayoutType
-						posts={data.data as TPostCard[]}
-						error={data.error}
-						blockVariation={data.blockVariation}
-					/>
-				)}
+	console.log('data', data)
 
-			{!!data?.data?.length &&
-				messageType === 'ncmazfc-preview-terms-block' && (
-					<TermBlockLayoutType
-						blockVariation={data.blockVariation}
-						dataInitErrors={data.error}
-						dataInitTerms={data.data as TCategoryCardFull[]}
-					/>
-				)}
+	return (
+		<div ref={ref} className="no-prose relative">
+			<>
+				{!!data?.data?.length &&
+					messageType === 'ncmazfc-preview-posts-block' && (
+						<MagazineLayoutType
+							posts={data.data as TPostCard[]}
+							error={data.error}
+							blockVariation={data.blockVariation}
+						/>
+					)}
+
+				{!!data?.data?.length &&
+					messageType === 'ncmazfc-preview-terms-block' && (
+						<TermBlockLayoutType
+							blockVariation={data.blockVariation}
+							dataInitErrors={data.error}
+							dataInitTerms={data.data as TCategoryCardFull[]}
+						/>
+					)}
+			</>
+
+			<div className="absolute inset-0 z-[1] bg-transparent" />
 		</div>
 	)
 }

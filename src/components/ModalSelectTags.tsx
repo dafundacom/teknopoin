@@ -1,12 +1,11 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import NcModal from '@/components/NcModal/NcModal'
 import Button from '@/components/Button/Button'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { FragmentType } from '@/__generated__'
 import { useLazyQuery } from '@apollo/client'
-import Link from 'next/link'
 import ButtonPrimary from './Button/ButtonPrimary'
 import Empty from './Empty'
 import Skeleton from './Skeleton/Skeleton'
@@ -16,17 +15,27 @@ import { NC_TAG_SHORT_FIELDS_FRAGMENT } from '@/fragments'
 import errorHandling from '@/utils/errorHandling'
 import GraphqlError from './GraphqlError'
 import getTrans from '@/utils/getTrans'
+import ButtonThird from './Button/ButtonThird'
 import { TagIcon } from './Icons/Icons'
+const T = getTrans()
 
-export interface ModalTagsProps {}
+interface Props {
+	onUpdated: (ids: number[]) => void
+	initIds?: number[]
+}
 
-const ModalTags: FC<ModalTagsProps> = ({}) => {
+const ModalSelectTags: FC<Props> = ({ onUpdated, initIds = [] }) => {
+	const [idSlecteds, setIdSlecteds] = useState<number[]>(initIds)
 	const [refetchTimes, setRefetchTimes] = useState(0)
-	const T = getTrans()
+
+	useEffect(() => {
+		setIdSlecteds(initIds)
+	}, [initIds])
 
 	const [queryGetTags, { loading, error, data, fetchMore, refetch }] =
 		useLazyQuery(QUERY_GET_TAGS, {
 			notifyOnNetworkStatusChange: true,
+			variables: { first: 100 },
 			context: {
 				fetchOptions: {
 					method: process.env.NEXT_PUBLIC_SITE_API_METHOD || 'GET',
@@ -97,23 +106,36 @@ const ModalTags: FC<ModalTagsProps> = ({}) => {
 								].map((w, i) => (
 									<div
 										key={i}
-										className={`inline-flex gap-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 md:px-4 md:py-2.5 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300`}
+										className={`inline-flex gap-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-600 md:px-4 md:py-2.5 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300`}
 									>
 										<Skeleton width={w} />
 									</div>
 								))
-							: (tags || []).map((tag) => (
-									<Link
-										key={getTagDataFromTagFragment(tag).databaseId}
-										className={`inline-block rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 md:px-4 md:py-2.5 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300`}
-										href={getTagDataFromTagFragment(tag).uri}
-									>
-										#{getTagDataFromTagFragment(tag).name}
-										<span className="text-sm font-normal">
-											({getTagDataFromTagFragment(tag).count})
-										</span>
-									</Link>
-								))}
+							: (tags || []).map((item) => {
+									const tag = getTagDataFromTagFragment(item)
+									const isSelected = idSlecteds.includes(tag.databaseId)
+									return (
+										<div
+											key={getTagDataFromTagFragment(tag).databaseId}
+											className={`inline-block cursor-pointer rounded-lg border border-neutral-200 px-3 py-2 text-sm text-neutral-600 md:px-4 md:py-2.5 dark:border-neutral-700 dark:text-neutral-300 ${isSelected ? 'ring-2 ring-neutral-700 dark:ring-neutral-400' : 'border-neutral-100 hover:bg-neutral-50 dark:hover:bg-neutral-800'}`}
+											aria-hidden
+											onClick={() => {
+												if (isSelected) {
+													setIdSlecteds(
+														idSlecteds.filter((id) => id !== tag.databaseId),
+													)
+												} else {
+													setIdSlecteds([...idSlecteds, tag.databaseId])
+												}
+											}}
+										>
+											#{getTagDataFromTagFragment(tag).name}
+											<span className="text-sm font-normal">
+												({getTagDataFromTagFragment(tag).count})
+											</span>
+										</div>
+									)
+								})}
 					</div>
 				)}
 
@@ -137,16 +159,24 @@ const ModalTags: FC<ModalTagsProps> = ({}) => {
 					<Button
 						pattern="third"
 						fontSize="text-sm font-medium"
+						className={
+							initIds.length
+								? 'ring-2 ring-neutral-800 hover:ring-neutral-800'
+								: undefined
+						}
 						onClick={() => {
 							openModal()
 							queryGetTags()
 						}}
 					>
+						{!!initIds.length && (
+							<div className="pointer-events-none absolute -right-1 -top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-neutral-800 p-0.5 text-center text-[0.55rem] leading-none text-white ring ring-white ring-offset-0 dark:bg-neutral-200 dark:text-black dark:ring-white">
+								{initIds.length}
+							</div>
+						)}
 						<TagIcon className="-ms-1.5 me-2 h-5 w-5" />
-
 						<div>
-							<span className="hidden sm:inline">{T['Other tags']}</span>
-							<span className="inline sm:hidden">{T.Tags}</span>
+							<span>{T['Tags']}</span>
 						</div>
 						<ChevronDownIcon
 							className="-me-1 ms-2 h-4 w-4"
@@ -154,11 +184,34 @@ const ModalTags: FC<ModalTagsProps> = ({}) => {
 						/>
 					</Button>
 				)}
-				modalTitle={T['Discover other tags']}
+				onOpenModal={() => setIdSlecteds(initIds)}
+				modalTitle={T['Tags']}
 				renderContent={renderModalContent}
+				enableFooter={true}
+				renderFooter={(closeModal) => {
+					return (
+						<div className="flex items-center justify-between">
+							<ButtonThird
+								onClick={() => setIdSlecteds([])}
+								sizeClass="py-3 px-4 sm:py-3 sm:px-6"
+							>
+								{T['Clear']}
+							</ButtonThird>
+							<ButtonPrimary
+								onClick={() => {
+									onUpdated(idSlecteds)
+									closeModal()
+								}}
+								sizeClass="py-3 px-4 sm:py-3 sm:px-6"
+							>
+								{T['Apply']}
+							</ButtonPrimary>
+						</div>
+					)
+				}}
 			/>
 		</div>
 	)
 }
 
-export default ModalTags
+export default ModalSelectTags

@@ -14,26 +14,28 @@ const SectionMagazine2: FC<SectionMagazine2Props> = ({ posts, className }) => {
 			) : (
 				<>
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-						<div className="grid gap-6">
-							{posts
-								.filter((_, i) => i < 3 && i > 0)
-								.map(item => {
-									return (
-										<Card11
-											ratio="aspect-w-5 aspect-h-3"
-											key={item.databaseId}
-											post={item}
-										/>
-									)
-								})}
-						</div>
+						{posts[1] ? (
+							<div className="grid gap-6">
+								{posts
+									.filter((_, i) => i < 3 && i > 0)
+									.map((item) => {
+										return (
+											<Card11
+												ratio="aspect-w-5 aspect-h-3"
+												key={item.databaseId}
+												post={item}
+											/>
+										)
+									})}
+							</div>
+						) : null}
 						<div className="lg:col-span-2">
 							{posts[0] && <Card2 size="large" post={posts[0]} />}
 						</div>
 						<div className="grid grid-cols-1 gap-6 md:col-span-3 md:grid-cols-2 xl:col-span-1 xl:grid-cols-1">
 							{posts
 								.filter((_, i) => i < 5 && i >= 3)
-								.map(item => {
+								.map((item) => {
 									return (
 										<Card11
 											ratio="aspect-w-5 aspect-h-3"
@@ -49,7 +51,7 @@ const SectionMagazine2: FC<SectionMagazine2Props> = ({ posts, className }) => {
 						<div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 							{posts
 								.filter((_, i) => i >= 5)
-								.map(item => {
+								.map((item) => {
 									return (
 										<Card11
 											ratio="aspect-w-5 aspect-h-3"

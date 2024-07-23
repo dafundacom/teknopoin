@@ -75,30 +75,32 @@ const SectionMagazine6: FC<SectionMagazine6Props> = ({
 				</div>
 
 				{/* RIGHT */}
-				<div className="mt-5 h-96 overflow-hidden rounded-3xl bg-neutral-100 p-5 md:absolute md:bottom-3 md:end-3 md:top-3 md:mt-0 md:h-auto md:w-1/2 md:bg-white lg:w-1/3 lg:rounded-[34px] lg:p-8 xl:bg-opacity-80 xl:backdrop-blur-xl xl:backdrop-filter dark:bg-neutral-800 md:dark:bg-neutral-900 xl:dark:bg-opacity-80">
-					<div className="hiddenScrollbar flow-root h-full w-full overflow-y-auto">
-						<div className="-my-5 divide-y divide-neutral-200 md:-my-7 dark:divide-neutral-700">
-							{subPosts.map(item => {
-								const post = getPostDataFromPostFragment(item)
+				{!!subPosts.length && (
+					<div className="mt-5 h-96 overflow-hidden rounded-3xl bg-neutral-100 p-5 md:absolute md:bottom-3 md:end-3 md:top-3 md:mt-0 md:h-auto md:w-1/2 md:bg-white lg:w-1/3 lg:rounded-[34px] lg:p-8 xl:bg-opacity-80 xl:backdrop-blur-xl xl:backdrop-filter dark:bg-neutral-800 md:dark:bg-neutral-900 xl:dark:bg-opacity-80">
+						<div className="hiddenScrollbar flow-root h-full w-full overflow-y-auto">
+							<div className="-my-5 divide-y divide-neutral-200 md:-my-7 dark:divide-neutral-700">
+								{subPosts.map((item) => {
+									const post = getPostDataFromPostFragment(item)
 
-								return (
-									<div key={post.databaseId} className="block py-5 lg:py-7">
-										<h2 className="nc-card-title text-sm font-semibold lg:text-base">
-											<Link
-												href={post.uri || ''}
-												dangerouslySetInnerHTML={{ __html: post.title || '' }}
-											></Link>
-										</h2>
-										<PostCardMeta
-											className="mt-4 text-xs sm:text-sm"
-											meta={post}
-										/>
-									</div>
-								)
-							})}
+									return (
+										<div key={post.databaseId} className="block py-5 lg:py-7">
+											<h2 className="nc-card-title text-sm font-semibold lg:text-base">
+												<Link
+													href={post.uri || ''}
+													dangerouslySetInnerHTML={{ __html: post.title || '' }}
+												></Link>
+											</h2>
+											<PostCardMeta
+												className="mt-4 text-xs sm:text-sm"
+												meta={post}
+											/>
+										</div>
+									)
+								})}
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
 			</main>
 		)
 	}

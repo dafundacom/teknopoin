@@ -69,9 +69,11 @@ export default function AvatarDropdown({ className = '' }: Props) {
 					sizeClass="w-12 h-12"
 				/>
 
-				<div className="ms-3 flex-grow">
+				<div className="ms-3 flex-grow overflow-hidden">
 					<h4 className="font-semibold capitalize">{viewer?.name}</h4>
-					<p className="mt-0.5 text-xs">{viewer?.email}</p>
+					<p className="mt-0.5 truncate text-xs">
+						<span className="truncate">{viewer?.email}</span>
+					</p>
 				</div>
 			</Link>
 		)
@@ -82,7 +84,7 @@ export default function AvatarDropdown({ className = '' }: Props) {
 			<Link
 				href={'/submission'}
 				className="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
-				onClick={e => {
+				onClick={(e) => {
 					if (isAuthenticated === false) {
 						e.preventDefault()
 						openLoginModal('/submission')

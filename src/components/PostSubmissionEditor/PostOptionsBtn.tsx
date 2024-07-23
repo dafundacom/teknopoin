@@ -85,7 +85,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 
 	const [postStyleSelected, setPostStyleSelected] = useState(
 		postStyles.find(
-			item => item.name === (defaultData.postStyleSelected || 'style1'),
+			(item) => item.name === (defaultData.postStyleSelected || 'style1'),
 		),
 	)
 
@@ -153,12 +153,12 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 
 			const postFormats = NC_SITE_SETTINGS[
 				'submissions-settings'
-			]?.post_options?.filter(item => item?.name === 'Post_Format')[0]
+			]?.post_options?.filter((item) => item?.name === 'Post_Format')[0]
 
 			if (!postFormats) return true
 
 			const format = postFormats?.options?.filter(
-				item => item?.name === option,
+				(item) => item?.name === option,
 			)[0]
 
 			if (!format) return true
@@ -260,8 +260,8 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 							<Label>{`${T.Image} ${idx + 1}`}</Label>
 							<ButtonInsertImage
 								defaultImage={objGalleryImgs?.[item] || undefined}
-								onChangeImage={image => {
-									setObjGalleryImgs(prevState => ({
+								onChangeImage={(image) => {
+									setObjGalleryImgs((prevState) => ({
 										...(prevState || {}),
 										[item]: image,
 									}))
@@ -284,7 +284,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 					{T.pageSubmission['Write an excerpt (optional)']}
 				</Label>
 				<Textarea
-					onChange={event => {
+					onChange={(event) => {
 						debounceGetExcerpt(event.currentTarget.value)
 					}}
 					defaultValue={strippedExcerpt}
@@ -304,7 +304,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 					{T.pageSubmission['Schedule Publication']} (UTC+0)
 				</Label>
 				<Input
-					onChange={event => {
+					onChange={(event) => {
 						settimeSchedulePublication(event.currentTarget.value)
 					}}
 					defaultValue={timeSchedulePublication}
@@ -329,7 +329,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 					{T.pageSubmission['Video URL (Youtube, Vimeo, mp4 ... )']}
 				</Label>
 				<Input
-					onChange={event => {
+					onChange={(event) => {
 						debounceVideoUrlChange(event.currentTarget.value)
 					}}
 					defaultValue={videoUrl}
@@ -354,7 +354,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 					htmlFor="audio-url"
 				>{`Audio URL (${sp})`}</Label>
 				<Input
-					onChange={event => {
+					onChange={(event) => {
 						debounceAudioUrlChange(event.currentTarget.value)
 					}}
 					defaultValue={audioUrl}
@@ -408,7 +408,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 				</Label>
 				<Listbox
 					value={selected}
-					onChange={value => {
+					onChange={(value) => {
 						setSelected(value)
 					}}
 				>
@@ -506,7 +506,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 	const checkOptionEnabel = (option: string) => {
 		return (
 			(NC_SITE_SETTINGS['submissions-settings']?.post_options?.filter(
-				item => item?.name === option && item?.enable,
+				(item) => item?.name === option && item?.enable,
 			)?.length || 0) > 0
 		)
 	}
@@ -547,7 +547,7 @@ const PostOptionsBtn: FC<PostOptionsBtnProps> = ({ onSubmit, defaultData }) => {
 				renderContent={renderContent}
 				renderTrigger={renderBtnOpenPopover}
 				modalTitle="Post options"
-				renderFooter={closeModal => {
+				renderFooter={(closeModal) => {
 					return (
 						<div className="flex items-center justify-between">
 							<ButtonThird

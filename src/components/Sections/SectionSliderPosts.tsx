@@ -9,10 +9,18 @@ import Card11 from '@/components/Card11/Card11'
 import Card10V2 from '@/components/Card10/Card10V2'
 import MySlider from '@/components/MySlider'
 import { SectionMagazine1Props } from './SectionMagazine1'
+import getTrans from '@/utils/getTrans'
+import Button from '../Button/Button'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { LinkProps } from 'next/link'
+
+const T = getTrans()
 
 export interface SectionSliderPostsProps extends SectionMagazine1Props {
 	postCardName?: 'card4' | 'card7' | 'card9' | 'card10' | 'card10V2' | 'card11'
 	perView?: 2 | 3 | 4
+	showViewAll?: boolean
+	viewAllLinkHref?: LinkProps['href']
 }
 
 const SectionSliderPosts: FC<SectionSliderPostsProps> = ({
@@ -20,6 +28,8 @@ const SectionSliderPosts: FC<SectionSliderPostsProps> = ({
 	posts,
 	postCardName = 'card4',
 	perView = 4,
+	showViewAll,
+	viewAllLinkHref,
 }) => {
 	let CardComponent = Card4
 
@@ -47,11 +57,29 @@ const SectionSliderPosts: FC<SectionSliderPostsProps> = ({
 			break
 	}
 
+	const postsFiltered = posts.filter((item) => item)
+
 	return (
 		<div className={`nc-SectionSliderPosts ${className}`}>
 			<MySlider
-				data={posts.filter(item => item)}
-				renderItem={item => <CardComponent key={item.databaseId} post={item} />}
+				data={showViewAll ? [...postsFiltered, 'viewAll'] : postsFiltered}
+				renderItem={(item) => {
+					if (typeof item === 'string') {
+						return (
+							<div className="flex h-full w-full items-center justify-center p-2">
+								<Button
+									href={viewAllLinkHref}
+									pattern={'primary'}
+									className="w-full"
+								>
+									{T['View all']}
+									<ArrowRightIcon className="ms-2 h-5 w-5 rtl:rotate-180" />
+								</Button>
+							</div>
+						)
+					}
+					return <CardComponent key={item.databaseId} post={item} />
+				}}
 				itemPerRow={perView}
 			/>
 		</div>

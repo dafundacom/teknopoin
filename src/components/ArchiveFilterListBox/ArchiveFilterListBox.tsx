@@ -1,8 +1,14 @@
 'use client'
 
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Fragment, useState } from 'react'
-import { Listbox, Transition } from '@headlessui/react'
+import {
+	Listbox,
+	ListboxButton,
+	ListboxOption,
+	ListboxOptions,
+	Transition,
+} from '@headlessui/react'
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
 import Button from '../Button/Button'
 
@@ -31,14 +37,14 @@ function ArchiveFilterListBox<T extends { name: string }>({
 		<div className={`nc-ArchiveFilterListBox flex-shrink-0 ${className}`}>
 			<Listbox
 				value={selected}
-				onChange={value => {
+				onChange={(value) => {
 					setSelected(value)
 					onChange && onChange(value)
 				}}
 				defaultValue={defaultValue}
 			>
 				<div className="relative">
-					<Listbox.Button as={'div'}>
+					<ListboxButton as={'div'}>
 						<Button pattern="third" fontSize="text-sm font-medium">
 							<svg
 								className="-ms-1.5 me-2 h-5 w-5"
@@ -88,16 +94,16 @@ function ArchiveFilterListBox<T extends { name: string }>({
 								aria-hidden="true"
 							/>
 						</Button>
-					</Listbox.Button>
+					</ListboxButton>
 					<Transition
 						as={Fragment}
 						leave="transition ease-in duration-100"
 						leaveFrom="opacity-100"
 						leaveTo="opacity-0"
 					>
-						<Listbox.Options className="absolute end-0 z-50 mt-2 max-h-96 w-52 overflow-auto rounded-xl bg-white py-1 text-sm text-neutral-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-900 dark:text-neutral-200 dark:ring-neutral-700">
+						<ListboxOptions className="absolute end-0 z-50 mt-2 max-h-96 w-52 overflow-auto rounded-xl bg-white py-1 text-sm text-neutral-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-900 dark:text-neutral-200 dark:ring-neutral-700">
 							{lists.map((item, index: number) => (
-								<Listbox.Option
+								<ListboxOption
 									key={index}
 									className={({ active }) =>
 										`${
@@ -124,9 +130,9 @@ function ArchiveFilterListBox<T extends { name: string }>({
 											) : null}
 										</>
 									)}
-								</Listbox.Option>
+								</ListboxOption>
 							))}
-						</Listbox.Options>
+						</ListboxOptions>
 					</Transition>
 				</div>
 			</Listbox>
